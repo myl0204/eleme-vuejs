@@ -69,7 +69,7 @@ export default {
     }
   },
   created() {
-    this.$http.get('/api/goods').then((res) => {
+    this.$http.get('api/goods').then((res) => {
       res = res.body
       if (res.errno === 0) {
         this.goods = res.data
