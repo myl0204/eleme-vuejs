@@ -6,7 +6,8 @@
 
 或者
 
-## [手机扫一扫](https://raw.githubusercontent.com/myl0204/eleme-vuejs/master/pics/1506338480.png)
+## 手机扫码：
+![手机扫一扫](https://raw.githubusercontent.com/myl0204/eleme-vuejs/master/pics/1506338480.png)
 
 
 ## Build Setup
