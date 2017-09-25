@@ -1,0 +1,47 @@
+@mixin bg-img($url) {
+  background-image: url($url+'@2x.png');
+  @media (-webkit-min-device-pixel-ratio: 3), (min-device-pixel-ratio: 3) {
+    background-image: url($url + "@3x.png")
+  }
+}
+
+@mixin border-1px($color:rgba(7, 17, 27, 0.1)) {
+  position: relative;
+  &:after {
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    content: ' ';
+    width: 100%;
+    height: 0;
+    border-bottom: 1px solid $color;
+    @media (-webkit-min-device-pixel-ratio: 1.5), (min-device-pixel-ratio: 1.5) {
+      -webkit-transform: scaleY(0.7);
+      transform: scaleY(0.7)
+    }
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-device-pixel-ratio: 2) {
+      -webkit-transform: scaleY(0.5);
+      transform: scaleY(0.5)
+    }
+  }
+}
+
+@mixin support-icon($url, $number) {
+  &.decrease {
+    @include bg-img($url+'decrease_'+$number)
+  }
+  &.discount {
+    @include bg-img($url+'discount_'+$number)
+  }
+  &.guarantee {
+    @include bg-img($url+'guarantee_'+$number)
+  }
+  &.invoice {
+    @include bg-img($url+'invoice_'+$number)
+  }
+  &.special {
+    @include bg-img($url+'special_'+$number)
+  }
+}
