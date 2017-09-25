@@ -16,7 +16,7 @@
               <span class="price">￥{{food.price}}</span>
               <span class="old-price" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
             </div>
-            <transition :name="toggle" mode="out-in" @before-leave="beforeLeave" @after-enter="afterEnter" key="toggle">
+            <transition appear :name="toggle" mode="out-in" @before-leave="beforeLeave" @after-enter="afterEnter" key="toggle">
               <div class="add-cart" @click="firstAdd" v-if="!food.count" key="add_cart">加入购物车</div>
               <div class="amount-wrapper" v-if="food.count" key="food_amount">
                 <Amount :food="food"></Amount>
@@ -262,6 +262,9 @@ export default {
           line-height: 24px;
           text-align: center;
           background-color: rgb(0, 160, 220);
+          &.appear-active {
+            transition: all 0s
+          }
           &.toggle-leave-active, &.toggle-enter-active {
             transition: width .4s
           }
@@ -272,7 +275,7 @@ export default {
             width: 0;
           }
           &.v-enter{
-            width: 24px;
+            width: 0;
           }
           &.v-enter-active {
             transition: width .4s
