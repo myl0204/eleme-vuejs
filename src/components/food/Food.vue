@@ -16,9 +16,13 @@
               <span class="price">￥{{food.price}}</span>
               <span class="old-price" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
             </div>
-            <transition appear :name="toggle" mode="out-in" @before-leave="beforeLeave" @after-enter="afterEnter" key="toggle">
-              <div class="add-cart" @click="firstAdd" v-if="!food.count" key="add_cart">加入购物车</div>
-              <div class="amount-wrapper" v-if="food.count" key="food_amount">
+            <transition
+            :name="toggle" 
+            mode="out-in" 
+            @before-leave="beforeLeave" 
+            @after-enter="afterEnter">
+              <div class="add-cart" @click="firstAdd" v-if="cartShow && !food.count" key="add_cart">加入购物车</div>
+              <div class="amount-wrapper" id="food-comp-amount" v-else key="food_amount">
                 <Amount :food="food"></Amount>
               </div>
             </transition>
@@ -83,10 +87,19 @@ export default {
   data() {
     return {
       show: false,
+      cartShow: true,
       currentType: 'ALL',
       contentFlag: false,
       toggle: ''
     }
+  },
+  created() {
+    eventBus.$on('showBtn', (bool) => {
+      this.cartShow = bool
+      if (bool) {
+        this.toggle = 'toggle'
+      }
+    })
   },
   computed: {
     positiveRatings() {
@@ -122,6 +135,11 @@ export default {
   methods: {
     showDetail() {
       this.show = true
+      if (!this.food.count) {
+        this.cartShow = true
+      } else {
+        this.cartShow = false
+      }
       this.currentType = 'ALL'
       this.contentFlag = false
       if (!this.detailScroll) {
@@ -151,24 +169,25 @@ export default {
       })
     },
     beforeLeave(el) {
-      if (this.toggle) {
+      if (this.toggle && el.className.includes('add-cart')) { // 让“按钮”内容为空，视觉效果更佳。
         el.textContent = ''
       }
     },
-    afterEnter(el) {
-      if (this.food.count && this.toggle) { // 这里有一个问题：其他动画效果也会触发这里的afterEnter函数。
-                                            // 先通过toggle属性判断是否为food组件。
-                                            // toggle:只有点击‘加入购物车’，才触发动画。才有afterEnter
-                                            // 已解决:其实不是其他动画效果触发的，food.count=1时，触发了这个动画
-                                            // 只是display:none 没看到而已。
-        let _el = el.querySelector('.amount-increase')
-        eventBus.$emit('drop', _el)
-        this.hideDetail()
+    afterEnter(el) { // Amount组件“进来”后，执行相应操作
+      if (this.show && el.id === 'food-comp-amount') {
+        if (this.toggle) {
+          this.food.count = 1 // 触发amount的动画
+          let _el = el.querySelector('.amount-increase')
+          eventBus.$emit('drop', _el) // drop小球动画
+          setTimeout(() => {
+            this.hideDetail()
+          }, 200)
+        }
       }
     },
     firstAdd() {
       this.toggle = 'toggle'
-      this.food.count = 1
+      this.cartShow = false
     },
     _initScroll() {
       this.detailScroll = new BScroll(this.$refs.foods, {
@@ -262,23 +281,14 @@ export default {
           line-height: 24px;
           text-align: center;
           background-color: rgb(0, 160, 220);
-          &.appear-active {
-            transition: all 0s
-          }
-          &.toggle-leave-active, &.toggle-enter-active {
+          &.toggle-leave-active, &.toggle-enter-active, {
             transition: width .4s
           }
           &.toggle-leave-to {
             width: 24px;  
           }
-          &.toggle-enter {
-            width: 0;
-          }
-          &.v-enter{
-            width: 0;
-          }
-          &.v-enter-active {
-            transition: width .4s
+          &.toggle-enter, {
+            width: 24px;
           }
         }
         .amount-wrapper {

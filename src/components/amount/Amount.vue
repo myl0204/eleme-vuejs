@@ -1,13 +1,18 @@
 <template>
   <div class="amount">
-    <transition name="rotate" key="remove_rotate">
-      <div class="amount-decrease" v-show="food.count>0" @click.stop="decreaseAmount($event)">
-        <span class="icon-remove_circle_outline"></span>
+    <transition-group name="rotate" key="remove_rotate"  @after-leave="afterLeave">
+      <div data-flag="amount" 
+          class="amount-decrease" 
+          v-show="food.count>0" 
+          @click.stop="decreaseAmount($event)"
+          :key="'decrease'"
+          >
+        <span data-flag="amount" class="icon-remove_circle_outline"></span>
       </div>
-    </transition>
-    <div class="amount-count" v-show="food.count>0" ref="food-count">{{Math.abs(food.count)}}</div>
-    <div class="amount-increase" @click.stop="addAmount($event)">
-      <span class="icon-add_circle"></span>
+      <div data-flag="amount" :key="'count'" class="amount-count" v-show="food.count>0" ref="food-count">{{foodCount}}</div>
+    </transition-group> 
+    <div data-flag="amount" class="amount-increase" @click.stop="addAmount($event)">
+      <span data-flag="amount" class="icon-add_circle"></span>
     </div>
   </div>
 </template>
@@ -21,9 +26,15 @@ export default {
       type: Object
     }
   },
+  computed: {
+    foodCount() {
+      return this.food.count === 0 ? 1 : this.food.count
+    }
+  },
   methods: {
     addAmount(event) {
       this.food.count ++
+      eventBus.$emit('showBtn', false)
       eventBus.$emit('drop', event.target)
     },
     decreaseAmount(event) {
@@ -33,6 +44,9 @@ export default {
           this.$emit('delFood')
         }
       }
+    },
+    afterLeave(el) { // “减号”滚回去后，触发购物车按钮动画
+      eventBus.$emit('showBtn', true)
     }
   },
   created() {
@@ -57,15 +71,10 @@ export default {
   .amount-decrease {
     &.rotate-enter-active,
     &.rotate-leave-active {
-      transition: all .4s
+      transition: all .3s
     }
-    &.rotate-enter {
-      transform: translateX(36px) rotateZ(360deg);
-      // opacity: 0;
-    }
-    &.rotate-leave-to {
-      transform: translateX(36px) rotateZ(360deg);
-      // opacity: 0;
+    &.rotate-enter, &.rotate-leave-to {
+      transform: translateX(48px) rotateZ(-360deg);
     }
   }
   .amount-count {
@@ -77,6 +86,13 @@ export default {
     color: rgb(147, 153, 159);
     text-align: center;
     line-height: 24px;
+    transform-origin: 6px 18px 0;
+    &.rotate-enter-active, &.rotate-leave-active {
+      transition: all .3s;
+    }
+    &.rotate-enter, &.rotate-leave-to {
+      transform: translateX(24px) rotateZ(-720deg);
+    }
   }
 }
 </style>

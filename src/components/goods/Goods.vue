@@ -13,7 +13,7 @@
         <li class="foods-type" v-for="item in goods">
           <h2 class="foods-type-name">{{item.name}}</h2>
           <ul>
-            <li class="foods-item" v-for="foodItem in item.foods" @click="selectFood(foodItem)">
+            <li class="foods-item" v-for="foodItem in item.foods" @click.capture="selectFood(foodItem, $event)">
               <img class="foods-icon" :src="foodItem.icon" width="57" height="57">
               <div class="foods-detail">
                 <h3 class="foods-name">{{foodItem.name}}</h3>
@@ -145,8 +145,11 @@ export default {
     scrollMenu() {
       this.menuScroll.scrollToElement(this.$refs['goods-type'].getElementsByClassName('current')[0], 300)
     },
-    selectFood(food) {
+    selectFood(food, event) {
       this.selectedFood = food
+      if (event.target.dataset.flag === 'amount') {
+        return
+      }
       this.$nextTick(() => {
         this.$refs['food-detail'].showDetail()
       })
