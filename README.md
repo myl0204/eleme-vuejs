@@ -55,8 +55,8 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 要做就要做到最好。
 限于能力，以下交互效果未能和最新版(Android V7.2)Eleme APP一致。
 
-* 商品列表中，当商品数量变为0时，动画于原版不符
+* ~~商品列表中，当商品数量变为0时，动画与原版不符~~
 
-* 商品详情页中，当商品数量变为0时，动画与原版不符
+* ~~商品详情页中，当商品数量变为0时，动画与原版不符~~
 
 * UI相关（无对应PSD文件）
